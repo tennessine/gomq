@@ -10,10 +10,15 @@ type Node struct {
 type HashTable struct {
 	listArray []*Node
 	tableSize int
+	size int
 }
 
-func (ht *HashTable) Init() {
-	ht.tableSize = 101
+func (ht *HashTable) Size() int {
+	return ht.size
+}
+
+func (ht *HashTable) Init(size int) {
+	ht.tableSize = size
 	ht.listArray = make([]*Node, ht.tableSize)
 
 	for i := 0; i < ht.tableSize; i++ {
@@ -31,6 +36,7 @@ func (ht *HashTable) Add(value int) {
 	temp.value = value
 	temp.next = ht.listArray[hash]
 	ht.listArray[hash] = temp
+	ht.size++
 }
 
 func (ht *HashTable) Remove(value int) bool {
@@ -39,12 +45,14 @@ func (ht *HashTable) Remove(value int) bool {
 	head = ht.listArray[hash]
 	if head != nil && head.value == value {
 		ht.listArray[hash] = head.next
+		ht.size--
 		return true
 	}
 	for head != nil {
 		nextNode = head.next
 		if nextNode != nil && nextNode.value == value {
 			head.next = nextNode.next
+			ht.size--
 			return true
 		}
 		head = nextNode
